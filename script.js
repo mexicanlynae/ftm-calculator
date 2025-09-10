@@ -18,6 +18,31 @@ function selectCalculator(type) {
     }
 }
 
+// ======== Sword Data ========
+const swords = [
+    {name: "LinkedSword", min: 100, max: 150, cooldown: 1.5},
+    {name: "Iron Sword", min: 2, max: 4, cooldown: 0.5},
+    {name: "Chaos Saber", min: 300, max: 400, cooldown: 2},
+    // Add more swords here easily
+];
+
+// ======== Enchantments ========
+const normalEnchants = [
+    {name: "Zap", level:0, max:8, color:"green"},
+    {name: "Sharpness", level:0, max:10, color:"green"},
+    {name: "Ignition", level:0, max:10, color:"green"},
+    {name: "Bleed", level:0, max:50, color:"green"}
+];
+
+const mysticEnchants = [
+    {name: "Smite", level:0, max:3, color:"green"},
+    {name: "Sacrifice", level:0, max:1, color:"yellow"},
+    {name: "Giant Slayer", level:0, max:3, color:"yellow"},
+    {name: "Reckless", level:0, max:5, color:"orange"},
+    {name: "Skewer", level:0, max:5, color:"red"},
+    {name: "Culling", level:0, max:3, color:"yellow"}
+];
+
 // ======== Enchantment Popup ========
 const openEnchantBtn = document.getElementById('openEnchantBtn');
 const closeEnchantBtn = document.getElementById('closeEnchantBtn');
@@ -25,40 +50,21 @@ const enchantPopup = document.getElementById('enchantPopup');
 const normalEnchantsDiv = document.getElementById('normalEnchants');
 const mysticEnchantsDiv = document.getElementById('mysticEnchants');
 
-// Enchantments list
-const normalEnchants = [
-    {name: "Zap", level: 0, max: 8, color: "green"},
-    {name: "Sharpness", level: 0, max: 10, color: "green"},
-    {name: "Ignition", level: 0, max: 10, color: "green"},
-    {name: "Bleed", level: 0, max: 50, color: "green"}
-];
-
-const mysticEnchants = [
-    {name: "Smite", level: 0, max: 3, color: "green"},
-    {name: "Sacrifice", level: 0, max: 1, color: "yellow"},
-    {name: "Giant Slayer", level: 0, max: 3, color: "yellow"},
-    {name: "Reckless", level: 0, max: 5, color: "orange"},
-    {name: "Skewer", level: 0, max: 5, color: "red"},
-    {name: "Culling", level: 0, max: 3, color: "yellow"}
-];
-
-// Open / Close Popup
-document.addEventListener("click", (e) => {
-    if (e.target && e.target.id === "openEnchantBtn") {
+document.addEventListener("click", (e)=>{
+    if(e.target && e.target.id === "openEnchantBtn"){
         enchantPopup.style.display = "flex";
         populateEnchantGrid(normalEnchants, normalEnchantsDiv);
         populateEnchantGrid(mysticEnchants, mysticEnchantsDiv);
     }
 });
 
-closeEnchantBtn.addEventListener("click", () => {
+closeEnchantBtn.addEventListener("click", ()=>{
     enchantPopup.style.display = "none";
 });
 
-// Populate Enchant Grid
-function populateEnchantGrid(enchantments, container) {
+function populateEnchantGrid(enchantments, container){
     container.innerHTML = "";
-    enchantments.forEach(enchant => {
+    enchantments.forEach(enchant=>{
         const box = document.createElement("div");
         box.className = "enchant-box";
         box.style.backgroundColor = enchant.color;
@@ -72,15 +78,15 @@ function populateEnchantGrid(enchantments, container) {
             </div>
         `;
 
-        box.querySelector(".minusBtn").addEventListener("click", () => {
-            if (enchant.level > 0) {
+        box.querySelector(".minusBtn").addEventListener("click", ()=>{
+            if(enchant.level > 0){
                 enchant.level--;
                 box.querySelector(".level").textContent = enchant.level;
             }
         });
 
-        box.querySelector(".plusBtn").addEventListener("click", () => {
-            if (enchant.level < enchant.max) {
+        box.querySelector(".plusBtn").addEventListener("click", ()=>{
+            if(enchant.level < enchant.max){
                 enchant.level++;
                 box.querySelector(".level").textContent = enchant.level;
             }
@@ -91,153 +97,152 @@ function populateEnchantGrid(enchantments, container) {
 }
 
 // ======== Render Damage Calculator ========
-function renderDamageCalculator() {
+function renderDamageCalculator(){
     const levelNames = [
-        "+Legendary", "++Legendary", "+++Legendary",
-        "+Mythical", "++Mythical", "+++Mythical",
-        "+Godlike", "++Godlike", "+++Godlike", "Ultimate"
+        "+Legendary","++Legendary","+++Legendary",
+        "+Mythical","++Mythical","+++Mythical",
+        "+Godlike","++Godlike","+++Godlike","Ultimate"
     ];
 
     let levelOptions = "";
-    for (let i = 1; i <= 10; i++) {
-        levelOptions += `<option value="${i}">+${i}</option>`;
-    }
-    for (let i = 11; i <= 20; i++) {
-        levelOptions += `<option value="${i}">+${i} (${levelNames[i - 11]})</option>`;
-    }
+    for(let i=1;i<=10;i++) levelOptions+=`<option value="${i}">+${i}</option>`;
+    for(let i=11;i<=20;i++) levelOptions+=`<option value="${i}">+${i} (${levelNames[i-11]})</option>`;
+
+    let swordOptions = "";
+    swords.forEach(s=>{
+        swordOptions += `<option value="${s.name}">${s.name}</option>`;
+    });
 
     calcContainer.innerHTML = `
-    <div class="section">
-        <label for="swordSelect">Select Sword:</label>
-        <select id="swordSelect">
-            <option value="sword1" data-min="100" data-max="150">Sword 1</option>
-            <option value="sword2" data-min="200" data-max="250">Sword 2</option>
-            <option value="sword3" data-min="300" data-max="400">Sword 3</option>
-        </select>
+        <div class="section">
+            <label for="swordSelect">Select Sword:</label>
+            <select id="swordSelect">${swordOptions}</select>
 
-        <label for="levelSelect">Sword Level (+1 to +20):</label>
-        <select id="levelSelect">${levelOptions}</select>
-    </div>
+            <label for="levelSelect">Sword Level (+1 to +20):</label>
+            <select id="levelSelect">${levelOptions}</select>
+        </div>
 
-    <div class="section">
-        <label for="storyInput">Story Damage Level:</label>
-        <input type="number" id="storyInput" min="0" value="0">
-    </div>
+        <div class="section">
+            <label for="storyInput">Story Damage Level:</label>
+            <input type="number" id="storyInput" min="0" value="0">
+        </div>
 
-    <div class="section">
-        <label>Select Enchantments:</label>
-        <button id="openEnchantBtn">Select Enchantments</button>
-    </div>
+        <div class="section">
+            <label>Select Enchantments:</label>
+            <button id="openEnchantBtn">Select Enchantments</button>
+        </div>
 
-    <button id="calculateBtn">Calculate Damage</button>
-    <div id="results">Results will appear here.</div>
-    <div id="enchantCheckboxes"></div>
+        <button id="calculateBtn">Calculate Damage</button>
+
+        <div id="results">Results will appear here.</div>
+
+        <div style="margin-top:10px;">
+            <input type="checkbox" id="dpsModeCheckbox">
+            <label for="dpsModeCheckbox">DPS Mode</label>
+        </div>
+
+        <div id="enchantCheckboxes"></div>
     `;
 
     document.getElementById('calculateBtn').addEventListener('click', calculateDamage);
 }
 
-// ======== Calculate Damage & Fire Tick ========
-function calculateDamage() {
-    const swordSelect = document.getElementById('swordSelect');
-    const swordMin = parseFloat(swordSelect.selectedOptions[0].dataset.min);
-    const swordMax = parseFloat(swordSelect.selectedOptions[0].dataset.max);
+// ======== Calculate Damage (with cooldown for future DPS) ========
+function calculateDamage(){
+    const swordName = document.getElementById('swordSelect').value;
+    const sword = swords.find(s=>s.name===swordName);
     const level = parseInt(document.getElementById('levelSelect').value);
     const story = parseFloat(document.getElementById('storyInput').value);
+    const dpsMode = document.getElementById('dpsModeCheckbox').checked;
 
-    // Base multipliers
-    const levelMultiplier = 1 + level * 0.075;
-    const storyMultiplier = 1 + story / 100;
+    // Level & story multipliers
+    const levelMultiplier = 1 + level*0.075;
+    const storyMultiplier = 1 + story/100;
 
-    let baseMin = swordMin * levelMultiplier * storyMultiplier;
-    let baseMax = swordMax * levelMultiplier * storyMultiplier;
+    let baseMin = sword.min * levelMultiplier * storyMultiplier;
+    let baseMax = sword.max * levelMultiplier * storyMultiplier;
 
     // Fire tick (Ignition)
-    const ignition = normalEnchants.find(e => e.name === "Ignition").level;
-    let fireTick = ignition > 0 ? baseMin * 0.06 * ignition : 0;
+    const ignition = normalEnchants.find(e=>e.name==="Ignition").level;
+    let fireTick = ignition>0 ? baseMin*0.06*ignition : 0;
 
     // Render enchant checkboxes
-    const allEnchants = normalEnchants.concat(mysticEnchants).filter(e => e.level > 0);
+    const allEnchants = normalEnchants.concat(mysticEnchants).filter(e=>e.level>0);
     const checkboxDiv = document.getElementById('enchantCheckboxes');
     checkboxDiv.innerHTML = "<h3>Apply Enchants:</h3>";
-
-    allEnchants.forEach(enchant => {
+    allEnchants.forEach(e=>{
         const label = document.createElement('label');
         label.style.marginRight = "10px";
-        label.innerHTML = `<input type="checkbox" class="enchantCheck" id="${enchant.name}" checked> ${enchant.name} ${enchant.level}`;
+        label.innerHTML = `<input type="checkbox" class="enchantCheck" id="${e.name}" checked> ${e.name} ${e.level}`;
         checkboxDiv.appendChild(label);
     });
 
-    function updateDamage() {
+    function updateDamage(){
         let modifiedMin = baseMin;
         let modifiedMax = baseMax;
         let modifiedFire = fireTick;
 
-        // Read which enchants are active
         const active = Array.from(document.getElementsByClassName("enchantCheck"))
-                            .filter(c => c.checked)
-                            .map(c => c.id);
+                            .filter(c=>c.checked).map(c=>c.id);
 
-        // Exclusion check: Smite + Culling
         if(active.includes("Smite") && active.includes("Culling")){
             alert("Smite and Culling do not work together!");
-            // Automatically uncheck Culling
-            document.getElementById("Culling").checked = false;
-            active.splice(active.indexOf("Culling"), 1);
+            document.getElementById("Culling").checked=false;
+            active.splice(active.indexOf("Culling"),1);
         }
 
-        // Apply effects
+        // Enchant effects (basic examples)
         if(active.includes("Sharpness")){
-            const sharp = normalEnchants.find(e => e.name === "Sharpness").level;
-            modifiedMin *= 1 + 0.05 * sharp;
-            modifiedMax *= 1 + 0.05 * sharp;
-            modifiedFire *= 1 + 0.05 * sharp;
+            const lvl = normalEnchants.find(e=>e.name==="Sharpness").level;
+            modifiedMin*=(1+0.05*lvl);
+            modifiedMax*=(1+0.05*lvl);
+            modifiedFire*=(1+0.05*lvl);
+        }
+        if(active.includes("Bleed")){
+            const lvl = normalEnchants.find(e=>e.name==="Bleed").level;
+            modifiedMin += baseMin*0.005*lvl;
+            modifiedMax += baseMax*0.005*lvl;
+        }
+        if(active.includes("Zap")){
+            const lvl = normalEnchants.find(e=>e.name==="Zap").level;
+            modifiedMin*=(1+0.1*lvl);
+            modifiedMax*=(1+0.1*lvl);
+            modifiedFire*=(1+0.1*lvl);
         }
 
         if(active.includes("Ignition")){
-            // already calculated fireTick
-            modifiedFire = fireTick * (active.includes("Sharpness") ? 1 + 0.05 * normalEnchants.find(e=>e.name==="Sharpness").level : 1);
-        }
-
-        if(active.includes("Bleed")){
-            const bleedLvl = normalEnchants.find(e => e.name === "Bleed").level;
-            // simplified: add bleed damage per hit
-            modifiedMin += baseMin * 0.005 * bleedLvl;
-            modifiedMax += baseMax * 0.005 * bleedLvl;
-        }
-
-        if(active.includes("Zap")){
-            const zapLvl = normalEnchants.find(e => e.name === "Zap").level;
-            modifiedMin *= 1 + 0.1 * zapLvl;
-            modifiedMax *= 1 + 0.1 * zapLvl;
-            modifiedFire *= 1 + 0.1 * zapLvl;
+            modifiedFire = fireTick * (active.includes("Sharpness") ? 1+0.05*normalEnchants.find(e=>e.name==="Sharpness").level : 1);
         }
 
         if(active.includes("Smite")){
-            const smiteLvl = mysticEnchants.find(e => e.name === "Smite").level;
-            modifiedMin *= 1 + 0.125 + 0.025 * (smiteLvl - 1);
-            modifiedMax *= 1 + 0.125 + 0.025 * (smiteLvl - 1);
-            modifiedFire *= 1 + 0.125 + 0.025 * (smiteLvl - 1);
+            const lvl = mysticEnchants.find(e=>e.name==="Smite").level;
+            modifiedMin*=(1+0.125+0.025*(lvl-1));
+            modifiedMax*=(1+0.125+0.025*(lvl-1));
+            modifiedFire*=(1+0.125+0.025*(lvl-1));
         }
 
         if(active.includes("Culling")){
-            const cullLvl = mysticEnchants.find(e => e.name === "Culling").level;
-            modifiedMin *= 1 + 0.125 + 0.025 * (cullLvl - 1);
-            modifiedMax *= 1 + 0.125 + 0.025 * (cullLvl - 1);
-            modifiedFire *= 1 + 0.125 + 0.025 * (cullLvl - 1);
+            const lvl = mysticEnchants.find(e=>e.name==="Culling").level;
+            modifiedMin*=(1+0.125+0.025*(lvl-1));
+            modifiedMax*=(1+0.125+0.025*(lvl-1));
+            modifiedFire*=(1+0.125+0.025*(lvl-1));
         }
 
-        document.getElementById("results").innerHTML = `
+        // Show results
+        const resultsDiv = document.getElementById("results");
+        resultsDiv.innerHTML = `
             <p>Base Damage: ${modifiedMin.toFixed(2)} - ${modifiedMax.toFixed(2)}</p>
             <p>Fire Tick: ${modifiedFire.toFixed(2)} / sec</p>
         `;
+
+        if(dpsMode){
+            resultsDiv.innerHTML += `<p>DPS Mode ON - cooldown ${sword.cooldown}s (future calculation)</p>`;
+        }
     }
 
-    // Add listeners for checkbox toggles
     const checkboxes = document.getElementsByClassName("enchantCheck");
-    Array.from(checkboxes).forEach(cb => cb.addEventListener("change", updateDamage));
+    Array.from(checkboxes).forEach(cb=>cb.addEventListener("change", updateDamage));
 
-    // Initial render
     updateDamage();
 }
 
