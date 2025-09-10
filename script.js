@@ -1,35 +1,13 @@
+// ======== Option Buttons ========
 const damageBtn = document.getElementById('damageBtn');
 const healthBtn = document.getElementById('healthBtn');
 const calcContainer = document.getElementById('calculatorContainer');
 
-// Enchantment popup elements
-const openEnchantBtn = document.getElementById('openEnchantBtn');
-const closeEnchantBtn = document.getElementById('closeEnchantBtn');
-const enchantPopup = document.getElementById('enchantPopup');
-const normalEnchantsDiv = document.getElementById('normalEnchants');
-const mysticEnchantsDiv = document.getElementById('mysticEnchants');
+damageBtn.addEventListener('click', () => selectCalculator('damage'));
+healthBtn.addEventListener('click', () => selectCalculator('health'));
 
-// Example enchantments based on your new list
-
-const normalEnchants = [
-    {name: "Zap", level: 0, max: 5, color: "green"},
-    {name: "Sharpness", level: 0, max: 5, color: "green"},
-    {name: "Ignition", level: 0, max: 5, color: "green"},
-    {name: "Bleed", level: 0, max: 5, color: "green"}
-];
-
-const mysticEnchants = [
-    {name: "Smite", level: 0, max: 5, color: "green"},
-    {name: "Sacrifice", level: 0, max: 5, color: "yellow"},
-    {name: "Giant Slayer", level: 0, max: 5, color: "yellow"},
-    {name: "Reckless", level: 0, max: 5, color: "orange"},
-    {name: "Skewer", level: 0, max: 5, color: "red"},
-    {name: "Culling", level: 0, max: 5, color: "yellow"}
-];
-
-// Option switching
 function selectCalculator(type) {
-    if(type === 'damage'){
+    if (type === 'damage') {
         damageBtn.classList.add('selected');
         healthBtn.classList.remove('selected');
         renderDamageCalculator();
@@ -40,10 +18,79 @@ function selectCalculator(type) {
     }
 }
 
-damageBtn.addEventListener('click', () => selectCalculator('damage'));
-healthBtn.addEventListener('click', () => selectCalculator('health'));
+// ======== Enchantment Popup ========
+const openEnchantBtn = document.getElementById('openEnchantBtn');
+const closeEnchantBtn = document.getElementById('closeEnchantBtn');
+const enchantPopup = document.getElementById('enchantPopup');
+const normalEnchantsDiv = document.getElementById('normalEnchants');
+const mysticEnchantsDiv = document.getElementById('mysticEnchants');
 
-// Render Damage Calculator
+// Enchantments list
+const normalEnchants = [
+    {name: "Zap", level: 0, max: 8, color: "green"},
+    {name: "Sharpness", level: 0, max: 10, color: "green"},
+    {name: "Ignition", level: 0, max: 10, color: "green"},
+    {name: "Bleed", level: 0, max: 50, color: "green"}
+];
+
+const mysticEnchants = [
+    {name: "Smite", level: 0, max: 3, color: "green"},
+    {name: "Sacrifice", level: 0, max: 1, color: "yellow"},
+    {name: "Giant Slayer", level: 0, max: 3, color: "yellow"},
+    {name: "Reckless", level: 0, max: 5, color: "orange"},
+    {name: "Skewer", level: 0, max: 5, color: "red"},
+    {name: "Culling", level: 0, max: 3, color: "yellow"}
+];
+
+// Open / Close Popup
+document.addEventListener("click", (e) => {
+    if (e.target && e.target.id === "openEnchantBtn") {
+        enchantPopup.style.display = "flex";
+        populateEnchantGrid(normalEnchants, normalEnchantsDiv);
+        populateEnchantGrid(mysticEnchants, mysticEnchantsDiv);
+    }
+});
+
+closeEnchantBtn.addEventListener("click", () => {
+    enchantPopup.style.display = "none";
+});
+
+// Populate Enchant Grid
+function populateEnchantGrid(enchantments, container) {
+    container.innerHTML = "";
+    enchantments.forEach(enchant => {
+        const box = document.createElement("div");
+        box.className = "enchant-box";
+        box.style.backgroundColor = enchant.color;
+
+        box.innerHTML = `
+            <div>${enchant.name}</div>
+            <div class="enchant-controls">
+                <button class="minusBtn">-</button>
+                <span class="level">${enchant.level}</span>
+                <button class="plusBtn">+</button>
+            </div>
+        `;
+
+        box.querySelector(".minusBtn").addEventListener("click", () => {
+            if (enchant.level > 0) {
+                enchant.level--;
+                box.querySelector(".level").textContent = enchant.level;
+            }
+        });
+
+        box.querySelector(".plusBtn").addEventListener("click", () => {
+            if (enchant.level < enchant.max) {
+                enchant.level++;
+                box.querySelector(".level").textContent = enchant.level;
+            }
+        });
+
+        container.appendChild(box);
+    });
+}
+
+// ======== Render Damage Calculator ========
 function renderDamageCalculator() {
     const levelNames = [
         "+Legendary", "++Legendary", "+++Legendary",
@@ -52,11 +99,11 @@ function renderDamageCalculator() {
     ];
 
     let levelOptions = "";
-    for(let i = 1; i <= 10; i++){
+    for (let i = 1; i <= 10; i++) {
         levelOptions += `<option value="${i}">+${i}</option>`;
     }
-    for(let i = 11; i <= 20; i++){
-        levelOptions += `<option value="${i}">+${i} (${levelNames[i-11]})</option>`;
+    for (let i = 11; i <= 20; i++) {
+        levelOptions += `<option value="${i}">+${i} (${levelNames[i - 11]})</option>`;
     }
 
     calcContainer.innerHTML = `
@@ -69,9 +116,7 @@ function renderDamageCalculator() {
         </select>
 
         <label for="levelSelect">Sword Level (+1 to +20):</label>
-        <select id="levelSelect">
-            ${levelOptions}
-        </select>
+        <select id="levelSelect">${levelOptions}</select>
     </div>
 
     <div class="section">
@@ -86,86 +131,115 @@ function renderDamageCalculator() {
 
     <button id="calculateBtn">Calculate Damage</button>
     <div id="results">Results will appear here.</div>
+    <div id="enchantCheckboxes"></div>
     `;
 
     document.getElementById('calculateBtn').addEventListener('click', calculateDamage);
 }
 
-// Enchantment popup functions
-function populateEnchantGrid(enchantments, container){
-    container.innerHTML = "";
-    enchantments.forEach(enchant=>{
-        const box = document.createElement("div");
-        box.className = "enchant-box";
-        box.style.backgroundColor = enchant.color;
-
-        box.innerHTML = `
-            <div>${enchant.name}</div>
-            <div class="enchant-controls">
-                <button class="minusBtn">-</button>
-                <span class="level">${enchant.level}</span>
-                <button class="plusBtn">+</button>
-            </div>
-        `;
-
-        box.querySelector(".minusBtn").addEventListener("click", ()=>{
-            if(enchant.level > 0){
-                enchant.level--;
-                box.querySelector(".level").textContent = enchant.level;
-            }
-        });
-
-        box.querySelector(".plusBtn").addEventListener("click", ()=>{
-            if(enchant.level < enchant.max){
-                enchant.level++;
-                box.querySelector(".level").textContent = enchant.level;
-            }
-        });
-
-        container.appendChild(box);
-    });
-}
-
-document.addEventListener("click", (e)=>{
-    if(e.target && e.target.id === "openEnchantBtn"){
-        enchantPopup.style.display = "flex";
-        populateEnchantGrid(normalEnchants, normalEnchantsDiv);
-        populateEnchantGrid(mysticEnchants, mysticEnchantsDiv);
-    }
-});
-
-closeEnchantBtn.addEventListener("click", ()=>{
-    enchantPopup.style.display = "none";
-});
-
-// Damage calculation
-function calculateDamage(){
-    const sword = document.getElementById('swordSelect');
-    const min = parseFloat(sword.selectedOptions[0].dataset.min);
-    const max = parseFloat(sword.selectedOptions[0].dataset.max);
-
+// ======== Calculate Damage & Fire Tick ========
+function calculateDamage() {
+    const swordSelect = document.getElementById('swordSelect');
+    const swordMin = parseFloat(swordSelect.selectedOptions[0].dataset.min);
+    const swordMax = parseFloat(swordSelect.selectedOptions[0].dataset.max);
     const level = parseInt(document.getElementById('levelSelect').value);
     const story = parseFloat(document.getElementById('storyInput').value);
 
-    // For now, sum enchantment multipliers (can adjust later)
-    let enchantMultiplier = 1;
-    normalEnchants.concat(mysticEnchants).forEach(e=>{
-        if(e.level > 0) enchantMultiplier += e.level * 0.05; // temporary formula
+    // Base multipliers
+    const levelMultiplier = 1 + level * 0.075;
+    const storyMultiplier = 1 + story / 100;
+
+    let baseMin = swordMin * levelMultiplier * storyMultiplier;
+    let baseMax = swordMax * levelMultiplier * storyMultiplier;
+
+    // Fire tick (Ignition)
+    const ignition = normalEnchants.find(e => e.name === "Ignition").level;
+    let fireTick = ignition > 0 ? baseMin * 0.06 * ignition : 0;
+
+    // Render enchant checkboxes
+    const allEnchants = normalEnchants.concat(mysticEnchants).filter(e => e.level > 0);
+    const checkboxDiv = document.getElementById('enchantCheckboxes');
+    checkboxDiv.innerHTML = "<h3>Apply Enchants:</h3>";
+
+    allEnchants.forEach(enchant => {
+        const label = document.createElement('label');
+        label.style.marginRight = "10px";
+        label.innerHTML = `<input type="checkbox" class="enchantCheck" id="${enchant.name}" checked> ${enchant.name} ${enchant.level}`;
+        checkboxDiv.appendChild(label);
     });
 
-    const levelMultiplier = 1 + (level * 0.075);
-    const storyMultiplier = 1 + (story / 100);
+    function updateDamage() {
+        let modifiedMin = baseMin;
+        let modifiedMax = baseMax;
+        let modifiedFire = fireTick;
 
-    const finalMin = (min * levelMultiplier * storyMultiplier * enchantMultiplier).toFixed(2);
-    const finalMax = (max * levelMultiplier * storyMultiplier * enchantMultiplier).toFixed(2);
-    const finalAvg = ((parseFloat(finalMin) + parseFloat(finalMax))/2).toFixed(2);
+        // Read which enchants are active
+        const active = Array.from(document.getElementsByClassName("enchantCheck"))
+                            .filter(c => c.checked)
+                            .map(c => c.id);
 
-    document.getElementById('results').innerHTML = `
-        <p>Min Damage: ${finalMin}</p>
-        <p>Max Damage: ${finalMax}</p>
-        <p>Average Damage: ${finalAvg}</p>
-    `;
+        // Exclusion check: Smite + Culling
+        if(active.includes("Smite") && active.includes("Culling")){
+            alert("Smite and Culling do not work together!");
+            // Automatically uncheck Culling
+            document.getElementById("Culling").checked = false;
+            active.splice(active.indexOf("Culling"), 1);
+        }
+
+        // Apply effects
+        if(active.includes("Sharpness")){
+            const sharp = normalEnchants.find(e => e.name === "Sharpness").level;
+            modifiedMin *= 1 + 0.05 * sharp;
+            modifiedMax *= 1 + 0.05 * sharp;
+            modifiedFire *= 1 + 0.05 * sharp;
+        }
+
+        if(active.includes("Ignition")){
+            // already calculated fireTick
+            modifiedFire = fireTick * (active.includes("Sharpness") ? 1 + 0.05 * normalEnchants.find(e=>e.name==="Sharpness").level : 1);
+        }
+
+        if(active.includes("Bleed")){
+            const bleedLvl = normalEnchants.find(e => e.name === "Bleed").level;
+            // simplified: add bleed damage per hit
+            modifiedMin += baseMin * 0.005 * bleedLvl;
+            modifiedMax += baseMax * 0.005 * bleedLvl;
+        }
+
+        if(active.includes("Zap")){
+            const zapLvl = normalEnchants.find(e => e.name === "Zap").level;
+            modifiedMin *= 1 + 0.1 * zapLvl;
+            modifiedMax *= 1 + 0.1 * zapLvl;
+            modifiedFire *= 1 + 0.1 * zapLvl;
+        }
+
+        if(active.includes("Smite")){
+            const smiteLvl = mysticEnchants.find(e => e.name === "Smite").level;
+            modifiedMin *= 1 + 0.125 + 0.025 * (smiteLvl - 1);
+            modifiedMax *= 1 + 0.125 + 0.025 * (smiteLvl - 1);
+            modifiedFire *= 1 + 0.125 + 0.025 * (smiteLvl - 1);
+        }
+
+        if(active.includes("Culling")){
+            const cullLvl = mysticEnchants.find(e => e.name === "Culling").level;
+            modifiedMin *= 1 + 0.125 + 0.025 * (cullLvl - 1);
+            modifiedMax *= 1 + 0.125 + 0.025 * (cullLvl - 1);
+            modifiedFire *= 1 + 0.125 + 0.025 * (cullLvl - 1);
+        }
+
+        document.getElementById("results").innerHTML = `
+            <p>Base Damage: ${modifiedMin.toFixed(2)} - ${modifiedMax.toFixed(2)}</p>
+            <p>Fire Tick: ${modifiedFire.toFixed(2)} / sec</p>
+        `;
+    }
+
+    // Add listeners for checkbox toggles
+    const checkboxes = document.getElementsByClassName("enchantCheck");
+    Array.from(checkboxes).forEach(cb => cb.addEventListener("change", updateDamage));
+
+    // Initial render
+    updateDamage();
 }
 
-// Initial render
-renderDamageCalculator();
+// ======== Initial Render ========
+selectCalculator('damage');
