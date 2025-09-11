@@ -28,8 +28,7 @@ const swords = [
 
 // ======== Enchantments ========
 const normalEnchants = [
-    {name: "Zap2", level:0, max:8, color:"green"}, // always applied
-    {name: "Zap", level:0, max:8, color:"green"},
+    {name: "Zap", level:0, max:8, color:"green"},      // always applied
     {name: "Sharpness", level:0, max:10, color:"green"},
     {name: "Ignition", level:0, max:10, color:"green"}, // always applied
     {name: "Bleed", level:0, max:50, color:"green"}
@@ -57,7 +56,7 @@ const mysticEnchantsDiv = document.getElementById('mysticEnchants');
 document.addEventListener("click", (e)=>{
     if(e.target && e.target.id === "openEnchantBtn"){
         enchantPopup.style.display = "flex";
-        populateEnchantGrid(normalEnchants.filter(e=>e.name!=="Ignition" && e.name!=="Zap2"), normalEnchantsDiv);
+        populateEnchantGrid(normalEnchants.filter(e=>e.name!=="Ignition" && e.name!=="Zap"), normalEnchantsDiv);
         populateEnchantGrid(mysticEnchants, mysticEnchantsDiv);
     }
 });
@@ -177,11 +176,11 @@ function calculateDamage(){
     const ignitionLvl = normalEnchants.find(e=>e.name==="Ignition").level;
     let fireTick = ignitionLvl>0 ? baseMin*0.06*ignitionLvl : 0;
 
-    const zap2Lvl = normalEnchants.find(e=>e.name==="Zap2").level;
-    let zapDamage = zap2Lvl > 0 ? baseMin*0.06*zap2Lvl : 0;
+    const zapLvl = normalEnchants.find(e=>e.name==="Zap").level;
+    let zapDamage = zapLvl > 0 ? baseMin*0.06*zapLvl : 0;
 
     const allEnchants = normalEnchants.concat(mysticEnchants)
-        .filter(e=>e.level>0 && e.name !== "Ignition" && e.name !== "Zap2");
+        .filter(e=>e.level>0 && e.name !== "Ignition" && e.name !== "Zap");
 
     const checkboxDiv = document.getElementById('enchantCheckboxes');
     checkboxDiv.innerHTML = "<h3>Apply Enchants:</h3>";
@@ -231,17 +230,21 @@ function calculateDamage(){
             modifiedMax *= (1+0.125 + 0.025*(lvl-1));
         }
 
-        let levelDisplay = levelNum + (levelUnit === 1000 ? "K" : levelUnit === 1000000 ? "M" : levelUnit === 1000000000 ? "B" : "");
-        let resultHTML = `<p>${swordName} +${levelDisplay} Damage: ${modifiedMin.toFixed(1)} - ${modifiedMax.toFixed(1)}</p>`;
-        resultHTML += `<p>Fire Tick Damage: ${modifiedFire.toFixed(1)}</p>`;
-        if(zap2Lvl > 0) resultHTML += `<p>Zap Damage: ${modifiedZap.toFixed(1)}</p>`;
-
-        document.getElementById('results').innerHTML = resultHTML;
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = `
+            <p>Base Damage: ${modifiedMin.toFixed(1)} - ${modifiedMax.toFixed(1)}</p>
+            <p>Fire Tick Damage: ${modifiedFire.toFixed(1)}</p>
+            <p>Zap Damage: ${modifiedZap.toFixed(1)}</p>
+        `;
     }
 
     updateDamage();
-    document.querySelectorAll(".enchantCheck").forEach(c=>c.addEventListener("change", updateDamage));
+
+    // Update when checkboxes change
+    Array.from(document.getElementsByClassName("enchantCheck")).forEach(c=>{
+        c.addEventListener("change", updateDamage);
+    });
 }
 
-// ======== Initialize ========
+// Initialize with damage calculator
 selectCalculator('damage');
