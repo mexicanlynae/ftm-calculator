@@ -158,7 +158,6 @@ function calculateDamage(){
     let baseMin = sword.min + extraLevel;
     let baseMax = sword.max + extraLevel;
 
-    // Story multiplier
     const storyMultiplier = 1 + story/100;
     baseMin *= storyMultiplier;
     baseMax *= storyMultiplier;
@@ -166,7 +165,6 @@ function calculateDamage(){
     const ignition = normalEnchants.find(e=>e.name==="Ignition").level;
     let fireTick = ignition>0 ? baseMin*0.06*ignition : 0;
 
-    // Enchant checkboxes
     const allEnchants = normalEnchants.concat(mysticEnchants).filter(e=>e.level>0);
     const checkboxDiv = document.getElementById('enchantCheckboxes');
     checkboxDiv.innerHTML = "<h3>Apply Enchants:</h3>";
@@ -213,32 +211,23 @@ function calculateDamage(){
         }
         if(active.includes("Smite")){
             const lvl = mysticEnchants.find(e=>e.name==="Smite").level;
-            modifiedMin*=(1+0.125+0.025*(lvl-1));
-            modifiedMax*=(1+0.125+0.025*(lvl-1));
-            modifiedFire*=(1+0.125+0.025*(lvl-1));
+            modifiedMin *= (1+0.125 + 0.025*(lvl-1));
+            modifiedMax *= (1+0.125 + 0.025*(lvl-1));
         }
         if(active.includes("Culling")){
             const lvl = mysticEnchants.find(e=>e.name==="Culling").level;
-            modifiedMin*=(1+0.125+0.025*(lvl-1));
-            modifiedMax*=(1+0.125+0.025*(lvl-1));
-            modifiedFire*=(1+0.125+0.025*(lvl-1));
+            modifiedMin *= (1+0.125 + 0.025*(lvl-1));
+            modifiedMax *= (1+0.125 + 0.025*(lvl-1));
         }
 
-        const resultsDiv = document.getElementById("results");
-        resultsDiv.innerHTML = `
-            <p>Base Damage: ${modifiedMin.toFixed(2)} - ${modifiedMax.toFixed(2)}</p>
-            <p>Fire Tick: ${modifiedFire.toFixed(2)} / sec</p>
-        `;
-
-        if(dpsMode){
-            resultsDiv.innerHTML += `<p>DPS Mode ON - cooldown ${sword.cooldown}s (future calculation)</p>`;
-        }
+        let resultHTML = `<p>${swordName} Damage: ${modifiedMin.toFixed(1)} - ${modifiedMax.toFixed(1)}</p>`;
+        resultHTML += `<p>Fire Tick Damage: ${modifiedFire.toFixed(1)}</p>`;
+        document.getElementById('results').innerHTML = resultHTML;
     }
 
-    const checkboxes = document.getElementsByClassName("enchantCheck");
-    Array.from(checkboxes).forEach(cb=>cb.addEventListener("change", updateDamage));
     updateDamage();
+    document.querySelectorAll(".enchantCheck").forEach(c=>c.addEventListener("change", updateDamage));
 }
 
-// ======== Initial Render ========
+// Initial render
 selectCalculator('damage');
