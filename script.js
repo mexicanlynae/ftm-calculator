@@ -14,7 +14,7 @@ function selectCalculator(type) {
     } else {
         healthBtn.classList.add('selected');
         damageBtn.classList.remove('selected');
-        calcContainer.innerHTML = '<h2 style="text-align:center;">Health Calculator</h2><p style="text-align:center;">Coming soon!</p>';
+        calcContainer.innerHTML = '<h2>Health Calculator</h2><p>Coming soon!</p>';
     }
 }
 
@@ -24,7 +24,6 @@ const swords = [
     {name: "EvilStaff", min: 5, max: 10, cooldown: 1.0},
     {name: "DesStaff", min: 5, max: 15, cooldown: 1.0},
     {name: "LinkedSword", min: 8, max: 15, cooldown: 1.0},
-    {name: "", min: 0, max: 0, cooldown: 0},
 ];
 
 // ======== Enchantments ========
@@ -45,7 +44,10 @@ const mysticEnchants = [
 ];
 
 // ======== Enchantment Popup ========
-const openEnchantBtn = document.getElementById('openEnchantBtn');
+const openEnchantBtn = document.createElement('button');
+openEnchantBtn.id = "openEnchantBtn";
+openEnchantBtn.textContent = "Select Enchantments";
+
 const closeEnchantBtn = document.getElementById('closeEnchantBtn');
 const enchantPopup = document.getElementById('enchantPopup');
 const normalEnchantsDiv = document.getElementById('normalEnchants');
@@ -100,7 +102,7 @@ function populateEnchantGrid(enchantments, container){
 // ======== Render Damage Calculator ========
 function renderDamageCalculator(){
     let swordOptions = "";
-    swords.forEach(s=>{ if(s.name) swordOptions += `<option value="${s.name}">${s.name}</option>` });
+    swords.forEach(s=>{ swordOptions += `<option value="${s.name}">${s.name}</option>` });
 
     calcContainer.innerHTML = `
         <div class="section">
@@ -120,22 +122,29 @@ function renderDamageCalculator(){
 
         <div class="section">
             <label>Select Enchantments:</label>
-            <button id="openEnchantBtn">Select Enchantments</button>
         </div>
-
-        <button id="calculateBtn">Calculate Damage</button>
-
-        <div id="results">Results will appear here.</div>
-
-        <div style="margin-top:10px;">
-            <input type="checkbox" id="dpsModeCheckbox">
-            <label for="dpsModeCheckbox">DPS Mode</label>
-        </div>
-
-        <div id="enchantCheckboxes"></div>
     `;
 
-    document.getElementById('calculateBtn').addEventListener('click', calculateDamage);
+    document.querySelector(".section:last-child").appendChild(openEnchantBtn);
+    const calculateBtn = document.createElement("button");
+    calculateBtn.id = "calculateBtn";
+    calculateBtn.textContent = "Calculate Damage";
+    calcContainer.appendChild(calculateBtn);
+
+    const resultsDiv = document.createElement("div");
+    resultsDiv.id = "results";
+    calcContainer.appendChild(resultsDiv);
+
+    const dpsDiv = document.createElement("div");
+    dpsDiv.style.marginTop="10px";
+    dpsDiv.innerHTML = `<input type="checkbox" id="dpsModeCheckbox"><label for="dpsModeCheckbox"> DPS Mode</label>`;
+    calcContainer.appendChild(dpsDiv);
+
+    const checkboxDiv = document.createElement("div");
+    checkboxDiv.id = "enchantCheckboxes";
+    calcContainer.appendChild(checkboxDiv);
+
+    calculateBtn.addEventListener('click', calculateDamage);
 }
 
 // ======== Calculate Damage ========
@@ -154,7 +163,6 @@ function calculateDamage(){
     baseMin *= storyMultiplier;
     baseMax *= storyMultiplier;
 
-    // Fire tick from Ignition
     const ignition = normalEnchants.find(e=>e.name==="Ignition").level;
     let fireTick = ignition>0 ? baseMin*0.06*ignition : 0;
 
