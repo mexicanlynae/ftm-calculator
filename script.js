@@ -31,7 +31,7 @@ const normalEnchants = [
     {name: "Zap", level:0, max:8, color:"green"},      // always applied
     {name: "Sharpness", level:0, max:10, color:"green"},
     {name: "Ignition", level:0, max:10, color:"green"}, // always applied
-    {name: "Bleed", level:0, max:50, color:"green"}
+    {name: "Bleed", level:0, max:10, color:"green"}
 ];
 
 const mysticEnchants = [
