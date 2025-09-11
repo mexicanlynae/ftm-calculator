@@ -24,8 +24,7 @@ const swords = [
     {name: "EvilStaff", min: 5, max: 10, cooldown: 1.0},
     {name: "DesStaff", min: 5, max: 15, cooldown: 1.0},
     {name: "LinkedSword", min: 8, max: 15, cooldown: 1.0},
-    // Empty placeholders
-    {name: "", min: 0, max: 0, cooldown: 0}, {name: "", min: 0, max: 0, cooldown: 0}, {name: "", min: 0, max: 0, cooldown: 0},
+    {name: "", min: 0, max: 0, cooldown: 0},
 ];
 
 // ======== Enchantments ========
