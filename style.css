@@ -1,6 +1,28 @@
 body {
     background-color: #ccc;
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+h1 {
+    margin-top: 20px;
+    color: #222;
+}
+
+.mode-section {
+    margin: 20px 0;
+}
+
+.mode-section button {
+    padding: 10px 20px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: white;
+    font-weight: bold;
 }
 
 .mode-section button.selected {
@@ -8,8 +30,35 @@ body {
     color: black;
 }
 
+.calculator-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin: 20px auto;
+    max-width: 700px;
+}
+
 .section {
-    margin: 10px 0;
+    background: #eee;
+    padding: 15px;
+    width: 100%;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.section label {
+    font-weight: bold;
+}
+
+#results {
+    background: #ddd;
+    padding: 15px;
+    width: 100%;
+    border-radius: 8px;
+    text-align: left;
 }
 
 .enchant-box {
@@ -19,6 +68,8 @@ body {
     width: 100px;
     text-align: center;
     border-radius: 5px;
+    font-weight: bold;
+    color: white;
 }
 
 .enchant-controls button {
@@ -40,7 +91,16 @@ body {
     border-radius: 8px;
 }
 
-#enchantCheckboxes label {
-    display: inline-block;
-    margin-right: 10px;
+.enchant-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+#enchantCheckboxes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 10px;
 }
