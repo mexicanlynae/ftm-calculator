@@ -2,30 +2,32 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FTM Calculator</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Welcome to the FTM Calculator!</h1>
 
-    <div class="mode-section">
-        <button id="damageBtn" class="selected">Damage</button>
-        <button id="healthBtn">Health</button>
+<h1>Welcome to the FTM Calculator!</h1>
+
+<div class="calculator-options">
+    <button id="damageBtn" class="option-btn selected">Damage</button>
+    <button id="healthBtn" class="option-btn">Health</button>
+</div>
+
+<div class="calculator-container" id="calculatorContainer">
+    <!-- Calculator content loaded by JS -->
+</div>
+
+<!-- Enchantment Popup -->
+<div id="enchantPopup" class="popup">
+    <div class="popup-content">
+        <h3>Normal Enchantments</h3>
+        <div id="normalEnchants" class="enchant-grid"></div>
+        <h3>Mystic Enchantments</h3>
+        <div id="mysticEnchants" class="enchant-grid"></div>
+        <button id="closeEnchantBtn">Close</button>
     </div>
-
-    <div id="calculatorContainer" class="calculator-container"></div>
-
-    <!-- Enchantment Popup -->
-    <div id="enchantPopup" class="popup">
-        <div class="popup-content">
-            <h3>Normal Enchantments</h3>
-            <div id="normalEnchants" class="enchant-grid"></div>
-            <h3>Mystic Enchantments</h3>
-            <div id="mysticEnchants" class="enchant-grid"></div>
-            <button id="closeEnchantBtn">Close</button>
-        </div>
-    </div>
+</div>
 
 <script src="script.js"></script>
 </body>
