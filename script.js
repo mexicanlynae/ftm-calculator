@@ -20,10 +20,33 @@ function selectCalculator(type) {
 
 // ======== Sword Data ========
 const swords = [
-    {name: "LinkedSword", min: 100, max: 150, cooldown: 1.5},
-    {name: "Iron Sword", min: 2, max: 4, cooldown: 0.5},
-    {name: "Chaos Saber", min: 300, max: 400, cooldown: 2},
-    // Add more swords here easily
+    {name: "Iron Sword", min: 2, max: 4, cooldown: 1.0},
+    {name: "EvilStaff", min: 5, max: 10, cooldown: 1.0},
+    {name: "DesStaff", min: 5, max: 15, cooldown: 1.0},
+    {name: "LinkedSword", min: 8, max: 15, cooldown: 1.0},
+    {name: "", min: 0, max: 0, cooldown: 0},
+    {name: "", min: 0, max: 0, cooldown: 0},
+    {name: "", min: 0, max: 0, cooldown: 0},
+    {name: "", min: 0, max: 0, cooldown: 0},
+    {name: "", min: 0, max: 0, cooldown: 0},
+    {name: "", min: 0, max: 0, cooldown: 0},
+    {name: "", min: 0, max: 0, cooldown: 0},
+    {name: "", min: 0, max: 0, cooldown: 0},
+    {name: "", min: 0, max: 0, cooldown: 0},
+    {name: "", min: 0, max: 0, cooldown: 0},
+    {name: "", min: 0, max: 0, cooldown: 0},
+    {name: "", min: 0, max: 0, cooldown: 0},
+    {name: "", min: 0, max: 0, cooldown: 0},
+    {name: "", min: 0, max: 0, cooldown: 0},
+    {name: "", min: 0, max: 0, cooldown: 0},
+    {name: "", min: 0, max: 0, cooldown: 0},
+    {name: "", min: 0, max: 0, cooldown: 0},
+    {name: "", min: 0, max: 0, cooldown: 0},
+    {name: "", min: 0, max: 0, cooldown: 0},
+    {name: "", min: 0, max: 0, cooldown: 0},
+    {name: "", min: 0, max: 0, cooldown: 0},
+    {name: "", min: 0, max: 0, cooldown: 0},
+    {name: "", min: 0, max: 0, cooldown: 0},
 ];
 
 // ======== Enchantments ========
