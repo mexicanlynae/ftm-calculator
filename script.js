@@ -56,7 +56,7 @@ const mysticEnchantsDiv = document.getElementById('mysticEnchants');
 document.addEventListener("click", (e)=>{
     if(e.target && e.target.id === "openEnchantBtn"){
         enchantPopup.style.display = "flex";
-        populateEnchantGrid(normalEnchants.filter(e=>e.name!=="Ignition" && e.name!=="Zap"), normalEnchantsDiv);
+        populateEnchantGrid(normalEnchants.filter(e=>e.name!=="nan" && e.name!=="nan"), normalEnchantsDiv);
         populateEnchantGrid(mysticEnchants, mysticEnchantsDiv);
     }
 });
@@ -149,6 +149,10 @@ function renderDamageCalculator(){
     dpsDiv.innerHTML = `<input type="checkbox" id="dpsModeCheckbox"><label for="dpsModeCheckbox"> DPS Mode</label>`;
     calcContainer.appendChild(dpsDiv);
 
+    const checkboxDiv = document.createElement("div");
+    checkboxDiv.id = "enchantCheckboxes";
+    calcContainer.appendChild(checkboxDiv);
+
     calculateBtn.addEventListener('click', calculateDamage);
 }
 
@@ -175,42 +179,71 @@ function calculateDamage(){
     const zapLvl = normalEnchants.find(e=>e.name==="Zap").level;
     let zapDamage = zapLvl > 0 ? baseMin*0.06*zapLvl : 0;
 
-    // Apply other enchantments
     const allEnchants = normalEnchants.concat(mysticEnchants)
         .filter(e=>e.level>0 && e.name !== "Ignition" && e.name !== "Zap");
 
-    let modifiedMin = baseMin;
-    let modifiedMax = baseMax;
-    let modifiedFire = fireTick;
-    let modifiedZap = zapDamage;
-
+    const checkboxDiv = document.getElementById('enchantCheckboxes');
+    checkboxDiv.innerHTML = "<h3>Apply Enchants:</h3>";
     allEnchants.forEach(e=>{
-        if(e.name==="Sharpness"){
-            modifiedMin*=(1+0.05*e.level);
-            modifiedMax*=(1+0.05*e.level);
-            modifiedFire*=(1+0.05*e.level);
-            modifiedZap*=(1+0.05*e.level);
-        }
-        if(e.name==="Bleed"){
-            modifiedMin += baseMin*0.005*e.level;
-            modifiedMax += baseMax*0.005*e.level;
-        }
-        if(e.name==="Smite"){
-            modifiedMin*=(1+0.125 + 0.025*(e.level-1));
-            modifiedMax*=(1+0.125 + 0.025*(e.level-1));
-        }
-        if(e.name==="Culling"){
-            modifiedMin*=(1+0.125 + 0.025*(e.level-1));
-            modifiedMax*=(1+0.125 + 0.025*(e.level-1));
-        }
+        const label = document.createElement('label');
+        label.style.marginRight = "10px";
+        label.innerHTML = `<input type="checkbox" class="enchantCheck" id="${e.name}" checked> ${e.name} ${e.level}`;
+        checkboxDiv.appendChild(label);
     });
 
-    const resultsDiv = document.getElementById('results');
-    resultsDiv.innerHTML = `
-        <p>Base Damage: ${modifiedMin.toFixed(1)} - ${modifiedMax.toFixed(1)}</p>
-        <p>Fire Tick Damage: ${modifiedFire.toFixed(1)}</p>
-        <p>Zap Damage: ${modifiedZap.toFixed(1)}</p>
-    `;
+    function updateDamage(){
+        let modifiedMin = baseMin;
+        let modifiedMax = baseMax;
+        let modifiedFire = fireTick;
+        let modifiedZap = zapDamage;
+
+        const active = Array.from(document.getElementsByClassName("enchantCheck"))
+                            .filter(c=>c.checked).map(c=>c.id);
+
+        if(active.includes("Smite") && active.includes("Culling")){
+            alert("Smite and Culling do not work together!");
+            document.getElementById("Culling").checked=false;
+            active.splice(active.indexOf("Culling"),1);
+        }
+
+        // Apply other enchantments
+        if(active.includes("Sharpness")){
+            const lvl = normalEnchants.find(e=>e.name==="Sharpness").level;
+            modifiedMin*=(1+0.05*lvl);
+            modifiedMax*=(1+0.05*lvl);
+            modifiedFire*=(1+0.05*lvl);
+            modifiedZap*=(1+0.05*lvl);
+        }
+        if(active.includes("Bleed")){
+            const lvl = normalEnchants.find(e=>e.name==="Bleed").level;
+            modifiedMin += baseMin*0.005*lvl;
+            modifiedMax += baseMax*0.005*lvl;
+        }
+        if(active.includes("Smite")){
+            const lvl = mysticEnchants.find(e=>e.name==="Smite").level;
+            modifiedMin *= (1+0.125 + 0.025*(lvl-1));
+            modifiedMax *= (1+0.125 + 0.025*(lvl-1));
+        }
+        if(active.includes("Culling")){
+            const lvl = mysticEnchants.find(e=>e.name==="Culling").level;
+            modifiedMin *= (1+0.125 + 0.025*(lvl-1));
+            modifiedMax *= (1+0.125 + 0.025*(lvl-1));
+        }
+
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = `
+            <p>Base Damage: ${modifiedMin.toFixed(1)} - ${modifiedMax.toFixed(1)}</p>
+            <p>Fire Tick Damage: ${modifiedFire.toFixed(1)}</p>
+            <p>Zap Damage: ${modifiedZap.toFixed(1)}</p>
+        `;
+    }
+
+    updateDamage();
+
+    // Update when checkboxes change
+    Array.from(document.getElementsByClassName("enchantCheck")).forEach(c=>{
+        c.addEventListener("change", updateDamage);
+    });
 }
 
 // Initialize with damage calculator
