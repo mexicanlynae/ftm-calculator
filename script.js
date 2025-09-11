@@ -28,9 +28,10 @@ const swords = [
 
 // ======== Enchantments ========
 const normalEnchants = [
+    {name: "Zap2", level:0, max:8, color:"green"}, // always applied
     {name: "Zap", level:0, max:8, color:"green"},
     {name: "Sharpness", level:0, max:10, color:"green"},
-    {name: "Ignition", level:0, max:10, color:"green"},
+    {name: "Ignition", level:0, max:10, color:"green"}, // always applied
     {name: "Bleed", level:0, max:50, color:"green"}
 ];
 
@@ -56,7 +57,7 @@ const mysticEnchantsDiv = document.getElementById('mysticEnchants');
 document.addEventListener("click", (e)=>{
     if(e.target && e.target.id === "openEnchantBtn"){
         enchantPopup.style.display = "flex";
-        populateEnchantGrid(normalEnchants, normalEnchantsDiv);
+        populateEnchantGrid(normalEnchants.filter(e=>e.name!=="Ignition" && e.name!=="Zap2"), normalEnchantsDiv);
         populateEnchantGrid(mysticEnchants, mysticEnchantsDiv);
     }
 });
@@ -161,24 +162,27 @@ function calculateDamage(){
     const swordName = document.getElementById('swordSelect').value;
     const sword = swords.find(s=>s.name===swordName);
     const story = parseFloat(document.getElementById('storyInput').value);
-    const dpsMode = document.getElementById('dpsModeCheckbox').checked;
 
-    // Level input with K/M/B prefixes
     const levelNum = parseFloat(document.getElementById('levelInputNumber').value) || 0;
     const levelUnit = parseInt(document.getElementById('levelUnit').value) || 1;
     const extraLevel = levelNum * levelUnit;
 
     let baseMin = sword.min + extraLevel;
     let baseMax = sword.max + extraLevel;
-
     const storyMultiplier = 1 + story/100;
     baseMin *= storyMultiplier;
     baseMax *= storyMultiplier;
 
-    const ignition = normalEnchants.find(e=>e.name==="Ignition").level;
-    let fireTick = ignition>0 ? baseMin*0.06*ignition : 0;
+    // Always-on effects
+    const ignitionLvl = normalEnchants.find(e=>e.name==="Ignition").level;
+    let fireTick = ignitionLvl>0 ? baseMin*0.06*ignitionLvl : 0;
 
-    const allEnchants = normalEnchants.concat(mysticEnchants).filter(e=>e.level>0);
+    const zap2Lvl = normalEnchants.find(e=>e.name==="Zap2").level;
+    let zapDamage = zap2Lvl > 0 ? baseMin*0.06*zap2Lvl : 0;
+
+    const allEnchants = normalEnchants.concat(mysticEnchants)
+        .filter(e=>e.level>0 && e.name !== "Ignition" && e.name !== "Zap2");
+
     const checkboxDiv = document.getElementById('enchantCheckboxes');
     checkboxDiv.innerHTML = "<h3>Apply Enchants:</h3>";
     allEnchants.forEach(e=>{
@@ -192,6 +196,7 @@ function calculateDamage(){
         let modifiedMin = baseMin;
         let modifiedMax = baseMax;
         let modifiedFire = fireTick;
+        let modifiedZap = zapDamage;
 
         const active = Array.from(document.getElementsByClassName("enchantCheck"))
                             .filter(c=>c.checked).map(c=>c.id);
@@ -202,25 +207,18 @@ function calculateDamage(){
             active.splice(active.indexOf("Culling"),1);
         }
 
+        // Apply other enchantments
         if(active.includes("Sharpness")){
             const lvl = normalEnchants.find(e=>e.name==="Sharpness").level;
             modifiedMin*=(1+0.05*lvl);
             modifiedMax*=(1+0.05*lvl);
             modifiedFire*=(1+0.05*lvl);
+            modifiedZap*=(1+0.05*lvl);
         }
         if(active.includes("Bleed")){
             const lvl = normalEnchants.find(e=>e.name==="Bleed").level;
             modifiedMin += baseMin*0.005*lvl;
             modifiedMax += baseMax*0.005*lvl;
-        }
-        if(active.includes("Zap")){
-            const lvl = normalEnchants.find(e=>e.name==="Zap").level;
-            modifiedMin*=(1+0.1*lvl);
-            modifiedMax*=(1+0.1*lvl);
-            modifiedFire*=(1+0.1*lvl);
-        }
-        if(active.includes("Ignition")){
-            modifiedFire = fireTick * (active.includes("Sharpness") ? 1+0.05*normalEnchants.find(e=>e.name==="Sharpness").level : 1);
         }
         if(active.includes("Smite")){
             const lvl = mysticEnchants.find(e=>e.name==="Smite").level;
@@ -236,11 +234,12 @@ function calculateDamage(){
         let levelDisplay = levelNum + (levelUnit === 1000 ? "K" : levelUnit === 1000000 ? "M" : levelUnit === 1000000000 ? "B" : "");
         let resultHTML = `<p>${swordName} +${levelDisplay} Damage: ${modifiedMin.toFixed(1)} - ${modifiedMax.toFixed(1)}</p>`;
         resultHTML += `<p>Fire Tick Damage: ${modifiedFire.toFixed(1)}</p>`;
+        if(zap2Lvl > 0) resultHTML += `<p>Zap Damage: ${modifiedZap.toFixed(1)}</p>`;
+
         document.getElementById('results').innerHTML = resultHTML;
     }
 
     updateDamage();
-
     document.querySelectorAll(".enchantCheck").forEach(c=>c.addEventListener("change", updateDamage));
 }
 
