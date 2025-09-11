@@ -48,8 +48,8 @@ const openEnchantBtn = document.createElement('button');
 openEnchantBtn.id = "openEnchantBtn";
 openEnchantBtn.textContent = "Select Enchantments";
 
-const closeEnchantBtn = document.getElementById('closeEnchantBtn');
 const enchantPopup = document.getElementById('enchantPopup');
+const closeEnchantBtn = document.getElementById('closeEnchantBtn');
 const normalEnchantsDiv = document.getElementById('normalEnchants');
 const mysticEnchantsDiv = document.getElementById('mysticEnchants');
 
@@ -107,9 +107,9 @@ function renderDamageCalculator(){
     calcContainer.innerHTML = `
         <div class="section">
             <label for="levelInputNumber">Level (adds +1 damage per level):</label>
-            <div style="display:flex; gap:5px; align-items:center;">
-                <input type="number" id="levelInputNumber" min="0" value="0" style="flex:1; padding:5px;">
-                <select id="levelUnit" style="padding:5px;">
+            <div class="level-input-container">
+                <input type="number" id="levelInputNumber" min="0" value="0">
+                <select id="levelUnit">
                     <option value="1"> </option>
                     <option value="1000">K</option>
                     <option value="1000000" selected>M</option>
@@ -163,7 +163,7 @@ function calculateDamage(){
     const story = parseFloat(document.getElementById('storyInput').value);
     const dpsMode = document.getElementById('dpsModeCheckbox').checked;
 
-    // NEW: Level with number + unit
+    // Level input with K/M/B prefixes
     const levelNum = parseFloat(document.getElementById('levelInputNumber').value) || 0;
     const levelUnit = parseInt(document.getElementById('levelUnit').value) || 1;
     const extraLevel = levelNum * levelUnit;
@@ -240,8 +240,9 @@ function calculateDamage(){
     }
 
     updateDamage();
+
     document.querySelectorAll(".enchantCheck").forEach(c=>c.addEventListener("change", updateDamage));
 }
 
-// Initial render
+// ======== Initialize ========
 selectCalculator('damage');
