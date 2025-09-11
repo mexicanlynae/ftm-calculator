@@ -24,29 +24,8 @@ const swords = [
     {name: "EvilStaff", min: 5, max: 10, cooldown: 1.0},
     {name: "DesStaff", min: 5, max: 15, cooldown: 1.0},
     {name: "LinkedSword", min: 8, max: 15, cooldown: 1.0},
-    {name: "", min: 0, max: 0, cooldown: 0},
-    {name: "", min: 0, max: 0, cooldown: 0},
-    {name: "", min: 0, max: 0, cooldown: 0},
-    {name: "", min: 0, max: 0, cooldown: 0},
-    {name: "", min: 0, max: 0, cooldown: 0},
-    {name: "", min: 0, max: 0, cooldown: 0},
-    {name: "", min: 0, max: 0, cooldown: 0},
-    {name: "", min: 0, max: 0, cooldown: 0},
-    {name: "", min: 0, max: 0, cooldown: 0},
-    {name: "", min: 0, max: 0, cooldown: 0},
-    {name: "", min: 0, max: 0, cooldown: 0},
-    {name: "", min: 0, max: 0, cooldown: 0},
-    {name: "", min: 0, max: 0, cooldown: 0},
-    {name: "", min: 0, max: 0, cooldown: 0},
-    {name: "", min: 0, max: 0, cooldown: 0},
-    {name: "", min: 0, max: 0, cooldown: 0},
-    {name: "", min: 0, max: 0, cooldown: 0},
-    {name: "", min: 0, max: 0, cooldown: 0},
-    {name: "", min: 0, max: 0, cooldown: 0},
-    {name: "", min: 0, max: 0, cooldown: 0},
-    {name: "", min: 0, max: 0, cooldown: 0},
-    {name: "", min: 0, max: 0, cooldown: 0},
-    {name: "", min: 0, max: 0, cooldown: 0},
+    // Empty placeholders
+    {name: "", min: 0, max: 0, cooldown: 0}, {name: "", min: 0, max: 0, cooldown: 0}, {name: "", min: 0, max: 0, cooldown: 0},
 ];
 
 // ======== Enchantments ========
@@ -121,28 +100,18 @@ function populateEnchantGrid(enchantments, container){
 
 // ======== Render Damage Calculator ========
 function renderDamageCalculator(){
-    const levelNames = [
-        "+Legendary","++Legendary","+++Legendary",
-        "+Mythical","++Mythical","+++Mythical",
-        "+Godlike","++Godlike","+++Godlike","Ultimate"
-    ];
-
-    let levelOptions = "";
-    for(let i=1;i<=10;i++) levelOptions+=`<option value="${i}">+${i}</option>`;
-    for(let i=11;i<=20;i++) levelOptions+=`<option value="${i}">+${i} (${levelNames[i-11]})</option>`;
-
     let swordOptions = "";
-    swords.forEach(s=>{
-        swordOptions += `<option value="${s.name}">${s.name}</option>`;
-    });
+    swords.forEach(s=>{ if(s.name) swordOptions += `<option value="${s.name}">${s.name}</option>` });
 
     calcContainer.innerHTML = `
         <div class="section">
+            <label for="levelInput">Level (adds +1 damage per level):</label>
+            <input type="number" id="levelInput" min="0" value="0">
+        </div>
+
+        <div class="section">
             <label for="swordSelect">Select Sword:</label>
             <select id="swordSelect">${swordOptions}</select>
-
-            <label for="levelSelect">Sword Level (+1 to +20):</label>
-            <select id="levelSelect">${levelOptions}</select>
         </div>
 
         <div class="section">
@@ -170,26 +139,27 @@ function renderDamageCalculator(){
     document.getElementById('calculateBtn').addEventListener('click', calculateDamage);
 }
 
-// ======== Calculate Damage (with cooldown for future DPS) ========
+// ======== Calculate Damage ========
 function calculateDamage(){
     const swordName = document.getElementById('swordSelect').value;
     const sword = swords.find(s=>s.name===swordName);
-    const level = parseInt(document.getElementById('levelSelect').value);
     const story = parseFloat(document.getElementById('storyInput').value);
     const dpsMode = document.getElementById('dpsModeCheckbox').checked;
+    const extraLevel = parseInt(document.getElementById('levelInput').value);
 
-    // Level & story multipliers
-    const levelMultiplier = 1 + level*0.075;
+    let baseMin = sword.min + extraLevel;
+    let baseMax = sword.max + extraLevel;
+
+    // Story multiplier
     const storyMultiplier = 1 + story/100;
+    baseMin *= storyMultiplier;
+    baseMax *= storyMultiplier;
 
-    let baseMin = sword.min * levelMultiplier * storyMultiplier;
-    let baseMax = sword.max * levelMultiplier * storyMultiplier;
-
-    // Fire tick (Ignition)
+    // Fire tick from Ignition
     const ignition = normalEnchants.find(e=>e.name==="Ignition").level;
     let fireTick = ignition>0 ? baseMin*0.06*ignition : 0;
 
-    // Render enchant checkboxes
+    // Enchant checkboxes
     const allEnchants = normalEnchants.concat(mysticEnchants).filter(e=>e.level>0);
     const checkboxDiv = document.getElementById('enchantCheckboxes');
     checkboxDiv.innerHTML = "<h3>Apply Enchants:</h3>";
@@ -214,7 +184,6 @@ function calculateDamage(){
             active.splice(active.indexOf("Culling"),1);
         }
 
-        // Enchant effects (basic examples)
         if(active.includes("Sharpness")){
             const lvl = normalEnchants.find(e=>e.name==="Sharpness").level;
             modifiedMin*=(1+0.05*lvl);
@@ -232,18 +201,15 @@ function calculateDamage(){
             modifiedMax*=(1+0.1*lvl);
             modifiedFire*=(1+0.1*lvl);
         }
-
         if(active.includes("Ignition")){
             modifiedFire = fireTick * (active.includes("Sharpness") ? 1+0.05*normalEnchants.find(e=>e.name==="Sharpness").level : 1);
         }
-
         if(active.includes("Smite")){
             const lvl = mysticEnchants.find(e=>e.name==="Smite").level;
             modifiedMin*=(1+0.125+0.025*(lvl-1));
             modifiedMax*=(1+0.125+0.025*(lvl-1));
             modifiedFire*=(1+0.125+0.025*(lvl-1));
         }
-
         if(active.includes("Culling")){
             const lvl = mysticEnchants.find(e=>e.name==="Culling").level;
             modifiedMin*=(1+0.125+0.025*(lvl-1));
@@ -251,7 +217,6 @@ function calculateDamage(){
             modifiedFire*=(1+0.125+0.025*(lvl-1));
         }
 
-        // Show results
         const resultsDiv = document.getElementById("results");
         resultsDiv.innerHTML = `
             <p>Base Damage: ${modifiedMin.toFixed(2)} - ${modifiedMax.toFixed(2)}</p>
@@ -265,7 +230,6 @@ function calculateDamage(){
 
     const checkboxes = document.getElementsByClassName("enchantCheck");
     Array.from(checkboxes).forEach(cb=>cb.addEventListener("change", updateDamage));
-
     updateDamage();
 }
 
