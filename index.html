@@ -1,33 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Piano Notes</title>
-<style>
-body {
-    background-color: #111;
-    color: #fff;
-    font-family: sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-}
-textarea {
-    width: 80%;
-    height: 400px;
-    margin-bottom: 10px;
-    background-color: #222;
-    color: #fff;
-    border: none;
-    padding: 10px;
-    font-size: 16px;
-}
-</style>
+  <meta charset="UTF-8">
+  <title>FTM Piano Notes</title>
 </head>
 <body>
-<h1>Piano Notes</h1>
-<textarea id="notes" placeholder="Paste your notes here!"></textarea>
+  <h2>Paste Your Notes</h2>
+  <textarea id="notes" rows="10" cols="50"></textarea>
+  <button onclick="updateNotes()">Save Notes</button>
+
+  <script>
+    function updateNotes() {
+      const notes = document.getElementById('notes').value;
+      // Here you would normally push to notes.txt if you had a backend.
+      // For GitHub Pages, just manually update notes.txt with the content.
+      alert("Copy the content to notes.txt file on GitHub Pages");
+    }
+  </script>
 </body>
 </html>
