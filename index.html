@@ -2,33 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>FTM Calculator</title>
-<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Piano Notes</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <h1>Piano Notes</h1>
+  <textarea id="notes" placeholder="Paste your notes here!"></textarea>
+  <button id="saveBtn">Save Notes</button>
+  <p id="status"></p>
 
-<h1>Welcome to the FTM Calculator!</h1>
-
-<div class="calculator-options">
-    <button id="damageBtn" class="option-btn selected">Damage</button>
-    <button id="healthBtn" class="option-btn">Health</button>
-</div>
-
-<div class="calculator-container" id="calculatorContainer">
-    <!-- Calculator content loaded by JS -->
-</div>
-
-<!-- Enchantment Popup -->
-<div id="enchantPopup" class="popup">
-    <div class="popup-content">
-        <h3>Normal Enchantments</h3>
-        <div id="normalEnchants" class="enchant-grid"></div>
-        <h3>Mystic Enchantments</h3>
-        <div id="mysticEnchants" class="enchant-grid"></div>
-        <button id="closeEnchantBtn">Close</button>
-    </div>
-</div>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
